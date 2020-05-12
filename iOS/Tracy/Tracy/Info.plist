@@ -20,6 +20,10 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>To scan for other Tracy apps</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>To allow this Tracy app to be discovered by others</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

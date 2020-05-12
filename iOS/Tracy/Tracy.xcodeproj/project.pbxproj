@@ -15,6 +15,7 @@
 		C3D86327246ABB5C00D75F0D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C3D86325246ABB5C00D75F0D /* LaunchScreen.storyboard */; };
 		C3D8632F246ACA1C00D75F0D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D8632E246ACA1C00D75F0D /* Constants.swift */; };
 		C3D86331246ACBC000D75F0D /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D86330246ACBC000D75F0D /* Central.swift */; };
+		C3D86333246AD0AE00D75F0D /* Peripheral.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D86332246AD0AE00D75F0D /* Peripheral.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		C3D86328246ABB5C00D75F0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C3D8632E246ACA1C00D75F0D /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		C3D86330246ACBC000D75F0D /* Central.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Central.swift; sourceTree = "<group>"; };
+		C3D86332246AD0AE00D75F0D /* Peripheral.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Peripheral.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				C3D8631E246ABB5A00D75F0D /* ViewController.swift */,
 				C3D8632E246ACA1C00D75F0D /* Constants.swift */,
 				C3D86330246ACBC000D75F0D /* Central.swift */,
+				C3D86332246AD0AE00D75F0D /* Peripheral.swift */,
 				C3D86320246ABB5A00D75F0D /* Main.storyboard */,
 				C3D86323246ABB5C00D75F0D /* Assets.xcassets */,
 				C3D86325246ABB5C00D75F0D /* LaunchScreen.storyboard */,
@@ -145,6 +148,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3D8631F246ABB5A00D75F0D /* ViewController.swift in Sources */,
+				C3D86333246AD0AE00D75F0D /* Peripheral.swift in Sources */,
 				C3D8631B246ABB5A00D75F0D /* AppDelegate.swift in Sources */,
 				C3D86331246ACBC000D75F0D /* Central.swift in Sources */,
 				C3D8631D246ABB5A00D75F0D /* SceneDelegate.swift in Sources */,

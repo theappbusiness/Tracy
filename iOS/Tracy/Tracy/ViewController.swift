@@ -10,6 +10,9 @@ import UIKit
 
 class ViewController: UIViewController {
 
+  private let central = Central()
+  private let peripheral = Peripheral()
+
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view.

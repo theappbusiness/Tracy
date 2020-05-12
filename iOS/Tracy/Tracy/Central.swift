@@ -10,19 +10,18 @@ import CoreBluetooth
 
 final class Central: NSObject {
 
-  private let centralManager = CBCentralManager(delegate: nil, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "RestoreID"])
+  private var centralManager: CBCentralManager!
   private var discoveries = Set<CBPeripheral>()
 
   override init() {
     super.init()
-    centralManager.delegate = self
+    centralManager = CBCentralManager(delegate: self, queue: nil, options: [CBCentralManagerOptionRestoreIdentifierKey: "CentralRestoreID"])
   }
 
   private func startScanning() {
     guard !centralManager.isScanning else { return print("Already scanning, cannot start scanning") }
     print("Beginning scan for peripherals")
-    centralManager.scanForPeripherals(withServices: [CBUUID(string: serviceUUIDString)])
-    // This is where you'd connect to the discovered device (peripheral) and transfer whatever data you needed to identify it as a trace
+    centralManager.scanForPeripherals(withServices: [serviceUUID])
   }
 
 }
@@ -30,7 +29,7 @@ final class Central: NSObject {
 extension Central: CBCentralManagerDelegate {
 
   func centralManager(_ central: CBCentralManager, willRestoreState dict: [String : Any]) {
-    
+    print("Central will restore state", dict)
   }
 
   func centralManagerDidUpdateState(_ central: CBCentralManager) {
@@ -44,6 +43,7 @@ extension Central: CBCentralManagerDelegate {
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
     guard discoveries.insert(peripheral).inserted else { return }
     print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "")
+    // This is where you'd connect to the discovered device (peripheral) and transfer whatever data you needed to identify it as a trace
   }
 
 }
