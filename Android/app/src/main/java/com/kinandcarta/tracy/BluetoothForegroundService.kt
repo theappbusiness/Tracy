@@ -30,7 +30,7 @@ class BluetoothForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v(tag, "onStartCommand")
         central.startScanningForPeripherals()
-        peripheral.startAdvertisingToCentrals()
+        peripheral.startAdvertisingToCentrals(this)
         return START_STICKY
     }
 
@@ -47,8 +47,8 @@ class BluetoothForegroundService : Service() {
         )
         channel.description = "Required notification channel"
         channel.setSound(null, null)
-        val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        manager.createNotificationChannel(channel)
+        val manager = getSystemService(NotificationManager::class.java)
+        manager?.createNotificationChannel(channel)
     }
 
     private fun startForeground() {
@@ -56,7 +56,7 @@ class BluetoothForegroundService : Service() {
             .setOngoing(true)
             .setProgress(0, 0, true)
             .setContentTitle("Looking for other Tracy users")
-            .setContentText("Tracy is looking for other devices with Tracy installed")
+            .setSmallIcon(R.mipmap.ic_launcher_round)
             .build()
         startForeground(1, notification)
     }
