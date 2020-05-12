@@ -46,26 +46,43 @@ class Central {
                 return
             }
             Log.d(tag, "Discovered new device. Name: ${result.device.name}, RSSI: ${result.rssi}, Address: ${result.device.address}")
-            val gatt = result.device.connectGatt(context, false, connectionCallback)
+            pendingConnections.add(result.device)
+            if (pendingConnections.size > 1) {
+                Log.d(tag, "Still awaiting previous connection(s) to complete")
+                return
+            }
+            connectNextPending()
         }
     }
     private val connectionCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-            Log.v(tag, "Connection state changed for ${gatt?.device?.address} to $newState with status $status")
-            when (Pair(status, newState)) {
-                Pair(BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_CONNECTING) ->
-                    Log.d(tag, "Connecting to ${gatt?.device?.address}")
-                Pair(BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_CONNECTED) ->
-                    Log.d(tag, "Connected to ${gatt?.device?.address}")
-                Pair(BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_DISCONNECTING) ->
-                    Log.d(tag, "Disconnecting from ${gatt?.device?.address}")
-                Pair(BluetoothGatt.GATT_SUCCESS, BluetoothProfile.STATE_DISCONNECTED) ->
-                    Log.d(tag, "Disconnected from ${gatt?.device?.address}")
-                else -> Log.e(tag, "Error connecting or disconnecting from ${gatt?.device?.address} with status $status and state $newState")
+            Log.v(tag, "Connection state changed for ${gatt?.device?.address} to $newState with status code $status")
+            if (gatt == null) {
+                Log.e(tag, "Gatt is null, cannot continue!")
+                return
+            }
+            val wasPending = pendingConnections.remove(gatt.device)
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+                Log.e(tag, "Connection state error for ${gatt.device.address} with status code $status")
+                connections.remove(gatt)
+                if (wasPending) connectNextPending()
+                return
+            }
+            when (newState) {
+                BluetoothProfile.STATE_CONNECTED -> {
+                    Log.d(tag, "Connected to ${gatt.device.address}")
+                    connections.add(gatt)
+                    connectNextPending()
+                }
+                BluetoothProfile.STATE_DISCONNECTED -> {
+                    Log.d(tag, "Disconnected from ${gatt.device.address}")
+                    connections.remove(gatt)
+                }
             }
         }
     }
     private val discoveries = mutableSetOf<BluetoothDevice>()
+    private val pendingConnections = mutableSetOf<BluetoothDevice>() // You can only perform one Bluetooth operation at once, including connecting, so you have to queue them!
     private val connections = mutableSetOf<BluetoothGatt>()
 
     fun startScanningForPeripherals(context: Context) {
@@ -76,6 +93,7 @@ class Central {
     fun stopScanningForPeripherals() {
         scanner.stopScan(scanCallback)
         discoveries.clear()
+        pendingConnections.clear()
         connections.forEach {
             it.disconnect()
             it.close()
@@ -83,4 +101,14 @@ class Central {
         connections.clear()
     }
 
+    private fun connectNextPending() {
+        val next = pendingConnections.firstOrNull() ?: return
+        connect(next)
+    }
+
+    private fun connect(device: BluetoothDevice) {
+        device.connectGatt(context, false, connectionCallback)
+    }
+
 }
+
