@@ -13,7 +13,7 @@ class Peripheral {
         private const val tag = "Tracy - Peripheral"
     }
 
-    private val scanner =  BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
+    private val advertiser =  BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
     private val settings = AdvertiseSettings.Builder()
         .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
         .setConnectable(true)
@@ -33,11 +33,11 @@ class Peripheral {
     }
 
     fun startAdvertisingToCentrals() {
-        scanner.startAdvertising(settings, data, advertiseCallback)
+        advertiser.startAdvertising(settings, data, advertiseCallback)
     }
 
     fun stopAdvertisingToCentrals() {
-        scanner.stopAdvertising(advertiseCallback)
+        advertiser.stopAdvertising(advertiseCallback)
     }
 
 }
