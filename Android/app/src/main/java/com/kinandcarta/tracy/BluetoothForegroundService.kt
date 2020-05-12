@@ -15,6 +15,7 @@ class BluetoothForegroundService : Service() {
     }
 
     private val central = Central()
+    private val peripheral = Peripheral()
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -25,11 +26,13 @@ class BluetoothForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         central.startScanningForPeripherals()
+        peripheral.startAdvertisingToCentrals()
         return START_STICKY
     }
 
     override fun onDestroy() {
         central.stopScanningForPeripherals()
+        peripheral.stopAdvertisingToCentrals()
     }
 
     private fun registerNotificationChannel() {
@@ -49,7 +52,7 @@ class BluetoothForegroundService : Service() {
             .setOngoing(true)
             .setProgress(0, 0, true)
             .setContentTitle("Looking for other Tracy users")
-            .setContentTitle("Tracy is looking for other devices with Tracy installed")
+            .setContentText("Tracy is looking for other devices with Tracy installed")
             .build()
         startForeground(1, notification)
     }

@@ -15,8 +15,7 @@ class Central {
         private const val tag = "Tracy - Central"
     }
 
-    private val adapter = BluetoothAdapter.getDefaultAdapter()
-    private val scanner = adapter.bluetoothLeScanner
+    private val scanner =  BluetoothAdapter.getDefaultAdapter().bluetoothLeScanner
     private val filter = ScanFilter.Builder()
         .setServiceUuid(ParcelUuid(serviceUUID))
         .build()
