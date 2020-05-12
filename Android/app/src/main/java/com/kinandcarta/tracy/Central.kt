@@ -44,10 +44,6 @@ class Central {
             Log.d(tag, "Discovered new device. Name: ${result.device.name}, RSSI: ${result.rssi}, Address: ${result.device.address}")
             // This is where you'd connect to the discovered device (peripheral) and transfer whatever data you needed to identify it as a trace
         }
-
-        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
-
-        }
     }
     private val discoveries = mutableSetOf<BluetoothDevice>()
 
