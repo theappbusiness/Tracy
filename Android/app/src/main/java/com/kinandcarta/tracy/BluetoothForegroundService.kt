@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.kinandcarta.tracy.central.Central
 
 class BluetoothForegroundService : Service() {
 
