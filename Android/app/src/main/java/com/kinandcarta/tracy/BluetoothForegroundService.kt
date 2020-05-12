@@ -10,6 +10,10 @@ import android.os.IBinder
 
 class BluetoothForegroundService : Service() {
 
+    companion object {
+        fun intent(context: Context) = Intent(context, BluetoothForegroundService::class.java)
+    }
+
     private val central = Central()
 
     override fun onBind(p0: Intent?): IBinder? = null
@@ -47,7 +51,7 @@ class BluetoothForegroundService : Service() {
             .setContentTitle("Looking for other Tracy users")
             .setContentTitle("Tracy is looking for other devices with Tracy installed")
             .build()
-        startForeground(0, notification)
+        startForeground(1, notification)
     }
 
 }
