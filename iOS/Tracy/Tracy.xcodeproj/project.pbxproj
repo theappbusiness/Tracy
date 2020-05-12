@@ -68,12 +68,20 @@
 				C3D8632E246ACA1C00D75F0D /* Constants.swift */,
 				C3D86330246ACBC000D75F0D /* Central.swift */,
 				C3D86332246AD0AE00D75F0D /* Peripheral.swift */,
+				C3D86334246AEFEA00D75F0D /* Supporting Files */,
+			);
+			path = Tracy;
+			sourceTree = "<group>";
+		};
+		C3D86334246AEFEA00D75F0D /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
 				C3D86320246ABB5A00D75F0D /* Main.storyboard */,
 				C3D86323246ABB5C00D75F0D /* Assets.xcassets */,
 				C3D86325246ABB5C00D75F0D /* LaunchScreen.storyboard */,
 				C3D86328246ABB5C00D75F0D /* Info.plist */,
 			);
-			path = Tracy;
+			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -298,7 +306,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VG9R2N57GC;
-				INFOPLIST_FILE = Tracy/Info.plist;
+				INFOPLIST_FILE = "Tracy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -316,7 +324,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VG9R2N57GC;
-				INFOPLIST_FILE = Tracy/Info.plist;
+				INFOPLIST_FILE = "Tracy/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
