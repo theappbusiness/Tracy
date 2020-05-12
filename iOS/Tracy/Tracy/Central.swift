@@ -43,7 +43,6 @@ extension Central: CBCentralManagerDelegate {
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
     guard discoveries.insert(peripheral).inserted else { return }
     print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "")
-    // This is where you'd connect to the discovered device (peripheral) and transfer whatever data you needed to identify it as a trace
     centralManager.connect(peripheral)
   }
 

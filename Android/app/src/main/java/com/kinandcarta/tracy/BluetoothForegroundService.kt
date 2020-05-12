@@ -29,7 +29,7 @@ class BluetoothForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.v(tag, "onStartCommand")
-        central.startScanningForPeripherals()
+        central.startScanningForPeripherals(this)
         peripheral.startAdvertisingToCentrals(this)
         return START_STICKY
     }
