@@ -45,7 +45,7 @@ class Peripheral {
         }
 
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
-            Log.v(tag, "Connection state changed to $newState with status $status for device ${device?.address}")
+            Log.d(tag, "Connection state changed to $newState with status $status for device ${device?.address}")
         }
     }
 

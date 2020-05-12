@@ -44,6 +44,19 @@ extension Central: CBCentralManagerDelegate {
     guard discoveries.insert(peripheral).inserted else { return }
     print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "")
     // This is where you'd connect to the discovered device (peripheral) and transfer whatever data you needed to identify it as a trace
+    centralManager.connect(peripheral)
+  }
+
+  func centralManager(_ central: CBCentralManager, didFailToConnect peripheral: CBPeripheral, error: Error?) {
+    print("Failed to connect to peripheral", peripheral.identifier, error?.localizedDescription ?? "")
+  }
+
+  func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+    print("Connected to peripheral", peripheral.identifier)
+  }
+
+  func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
+    print("Disconnected from peripheral", peripheral.identifier, error?.localizedDescription ?? "")
   }
 
 }
