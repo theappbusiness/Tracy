@@ -28,7 +28,7 @@ class Peripheral {
         }
 
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings?) {
-            Log.e(tag, "Advertising started successfully")
+            Log.d(tag, "Advertising started successfully")
         }
     }
 
