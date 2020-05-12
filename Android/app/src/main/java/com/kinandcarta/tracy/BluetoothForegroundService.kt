@@ -7,10 +7,12 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 
 class BluetoothForegroundService : Service() {
 
     companion object {
+        private const val tag = "Tracy - BluetoothForegroundService"
         fun intent(context: Context) = Intent(context, BluetoothForegroundService::class.java)
     }
 
@@ -20,11 +22,13 @@ class BluetoothForegroundService : Service() {
     override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onCreate() {
+        Log.v(tag, "onCreate")
         registerNotificationChannel()
         startForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.v(tag, "onStartCommand")
         central.startScanningForPeripherals()
         peripheral.startAdvertisingToCentrals()
         return START_STICKY
