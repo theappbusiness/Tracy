@@ -36,13 +36,13 @@ extension Central: CBCentralManagerDelegate {
     print("Central state updated", central.state.rawValue)
     switch central.state {
     case .poweredOn: startScanning()
-    default: break
+    default: discoveries.removeAll()
     }
   }
 
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-    guard discoveries.insert(peripheral).inserted else { return }
     print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "")
+    guard discoveries.insert(peripheral).inserted else { return print("Peripheral has already been discovered, ignoring", peripheral.identifier) }
     centralManager.connect(peripheral)
   }
 
@@ -52,10 +52,47 @@ extension Central: CBCentralManagerDelegate {
 
   func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
     print("Connected to peripheral", peripheral.identifier)
+    peripheral.delegate = self
+    peripheral.discoverServices([serviceUUID])
   }
 
   func centralManager(_ central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: Error?) {
     print("Disconnected from peripheral", peripheral.identifier, error?.localizedDescription ?? "")
+  }
+
+}
+
+extension Central: CBPeripheralDelegate {
+
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
+    if let error = error {
+      return print("Failed to discover services", peripheral.identifier, error.localizedDescription)
+    }
+    guard let service = peripheral.services?.first(where: { $0.uuid == serviceUUID }) else {
+      return print("Expected service does not exist in array of services", peripheral.identifier)
+    }
+    peripheral.discoverCharacteristics([characteristicUUID], for: service)
+  }
+
+  func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
+    if let error = error {
+      return print("Failed to discover characteristics", peripheral.identifier, service.uuid, error.localizedDescription)
+    }
+    guard let characteristic = service.characteristics?.first(where: { $0.uuid == characteristicUUID }) else {
+      return print("Expected characteristic does not exist in array of characteristics", peripheral.identifier, service.uuid)
+    }
+    peripheral.readValue(for: characteristic)
+  }
+
+  func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+    if let error = error {
+      return print("Failed to read value for characteristic", peripheral.identifier, characteristic.uuid, error.localizedDescription)
+    }
+    guard let value = characteristic.value else {
+      return print("Expected value for characteristic does not exist", peripheral.identifier, characteristic.uuid)
+    }
+    print("Value for characteristic", value, String(data: value, encoding: .utf8) ?? "")
+    centralManager.cancelPeripheralConnection(peripheral)
   }
 
 }

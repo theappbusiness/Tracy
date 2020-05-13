@@ -34,7 +34,7 @@ class Peripheral {
     }
     private val gattServerCallback = object : BluetoothGattServerCallback() {
         override fun onServiceAdded(status: Int, service: BluetoothGattService?) {
-            Log.v(tag, "Service ${service?.uuid} added with status: $status")
+            Log.d(tag, "Service ${service?.uuid} added with status: $status")
             when (status) {
                 BluetoothGatt.GATT_SUCCESS -> {
                     Log.d(tag, "Successfully added service")
@@ -47,12 +47,25 @@ class Peripheral {
         override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
             Log.d(tag, "Connection state changed to $newState with status $status for device ${device?.address}")
         }
+
+        override fun onCharacteristicReadRequest(
+            device: BluetoothDevice?,
+            requestId: Int,
+            offset: Int,
+            characteristic: BluetoothGattCharacteristic?
+        ) {
+            Log.d(tag, "Read request for ${device?.address}, requestId $requestId, offset: $offset, characteristic: ${characteristic?.uuid}")
+            server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, "tracy".toByteArray(Charsets.UTF_8))
+        }
     }
+    private lateinit var server: BluetoothGattServer
 
     fun startAdvertisingToCentrals(context: Context) {
         val manager = context.getSystemService(BluetoothManager::class.java)!!
-        val server = manager.openGattServer(context, gattServerCallback)
+        server = manager.openGattServer(context, gattServerCallback)
         val service = BluetoothGattService(serviceUUID, BluetoothGattService.SERVICE_TYPE_PRIMARY)
+        val characteristic = BluetoothGattCharacteristic(characteristicUUID, BluetoothGattCharacteristic.PROPERTY_READ, BluetoothGattCharacteristic.PERMISSION_READ)
+        service.addCharacteristic(characteristic)
         server.addService(service) // Advertising starts once this service is successfully added, asynchronously
     }
 

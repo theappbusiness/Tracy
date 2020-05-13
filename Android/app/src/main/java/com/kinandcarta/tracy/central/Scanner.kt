@@ -38,10 +38,7 @@ class Scanner(
                 Log.e(tag, "No ScanResult, cannot process!")
                 return
             }
-            if (!discoveries.add(result.device)) {
-                Log.v(tag, "Already discovered device, ignoring: ${result.device.address}")
-                return
-            }
+            if (!discoveries.add(result.device)) return
             Log.d(tag, "Discovered new device. Name: ${result.device.name}, RSSI: ${result.rssi}, Address: ${result.device.address}")
             onDiscoveredDevice(result.device)
         }

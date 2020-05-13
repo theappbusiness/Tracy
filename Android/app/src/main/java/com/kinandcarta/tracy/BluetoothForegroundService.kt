@@ -23,16 +23,16 @@ class BluetoothForegroundService : Service() {
     override fun onBind(p0: Intent?): IBinder? = null
 
     override fun onCreate() {
-        Log.v(tag, "onCreate")
+        Log.d(tag, "onCreate")
         registerNotificationChannel()
         startForeground()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.v(tag, "onStartCommand")
+        Log.d(tag, "onStartCommand")
         central.startScanningForPeripherals(this)
         peripheral.startAdvertisingToCentrals(this)
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
