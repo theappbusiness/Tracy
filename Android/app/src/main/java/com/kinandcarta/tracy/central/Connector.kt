@@ -75,7 +75,7 @@ class Connector {
     private fun connectNextPendingIfAny() {
         val nextDeviceToConnect = pendingConnections.firstOrNull() ?: return
         Log.d(tag, "Connecting next device ${nextDeviceToConnect.address}")
-        val gatt = nextDeviceToConnect.connectGatt(context, false, connectionCallback)
+        val gatt = nextDeviceToConnect.connectGatt(context, false, connectionCallback, BluetoothDevice.TRANSPORT_LE)
         connections.add(gatt)
     }
 

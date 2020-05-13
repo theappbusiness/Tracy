@@ -21,7 +21,8 @@ final class Peripheral: NSObject {
   private func startAdvertising() {
     guard !peripheralManager.isAdvertising else { return print("Already advertising, cannot start advertising") }
     let service = CBMutableService(type: serviceUUID, primary: true)
-    let characteristic = CBMutableCharacteristic(type: characteristicUUID, properties: .read, value: nil, permissions: .readable)
+    let value = Data(UIDevice.current.name.utf8)
+    let characteristic = CBMutableCharacteristic(type: characteristicUUID, properties: .read, value: value, permissions: .readable)
     service.characteristics = [characteristic]
     peripheralManager.add(service)
   }
@@ -55,12 +56,6 @@ extension Peripheral: CBPeripheralManagerDelegate {
       return print("Failed to add service", error, error.localizedDescription)
     }
     print("Started advertising")
-  }
-
-  func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
-    print("Received read request", request.central.identifier, request.characteristic.uuid)
-    request.value = Data(UIDevice.current.name.utf8)
-    peripheral.respond(to: request, withResult: .success)
   }
 
 }

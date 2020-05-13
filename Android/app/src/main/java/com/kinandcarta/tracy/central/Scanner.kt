@@ -18,15 +18,6 @@ class Scanner(
         private const val tag = "Tracy - Scanner"
     }
 
-    private val filter = ScanFilter.Builder()
-        .setServiceUuid(ParcelUuid(serviceUUID))
-        .build()
-    private val settings = ScanSettings.Builder()
-        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-        .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
-        .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
-        .setReportDelay(0)
-        .build()
     private val scanCallback = object : ScanCallback() {
         override fun onScanFailed(errorCode: Int) {
             Log.e(tag, "Scan failed with error code: $errorCode")
@@ -46,6 +37,15 @@ class Scanner(
     private val discoveries = mutableSetOf<BluetoothDevice>()
 
     fun startScanning() {
+        val filter = ScanFilter.Builder()
+            .setServiceUuid(ParcelUuid(serviceUUID))
+            .build()
+        val settings = ScanSettings.Builder()
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setMatchMode(ScanSettings.MATCH_MODE_STICKY)
+            .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
+            .setReportDelay(0)
+            .build()
         BluetoothAdapter.getDefaultAdapter().bluetoothLeScanner.startScan(listOf(filter), settings, scanCallback)
     }
 
