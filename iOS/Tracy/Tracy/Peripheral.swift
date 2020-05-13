@@ -7,6 +7,7 @@
 //
 
 import CoreBluetooth
+import UIKit
 
 final class Peripheral: NSObject {
 
@@ -58,7 +59,7 @@ extension Peripheral: CBPeripheralManagerDelegate {
 
   func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
     print("Received read request", request.central.identifier, request.characteristic.uuid)
-    request.value = Data("tracy".utf8)
+    request.value = Data(UIDevice.current.name.utf8)
     peripheral.respond(to: request, withResult: .success)
   }
 

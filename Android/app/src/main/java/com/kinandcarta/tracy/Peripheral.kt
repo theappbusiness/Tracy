@@ -55,7 +55,7 @@ class Peripheral {
             characteristic: BluetoothGattCharacteristic?
         ) {
             Log.d(tag, "Read request for ${device?.address}, requestId $requestId, offset: $offset, characteristic: ${characteristic?.uuid}")
-            server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, "tracy".toByteArray(Charsets.UTF_8))
+            server.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, android.os.Build.MODEL.toByteArray(Charsets.UTF_8))
         }
     }
     private lateinit var server: BluetoothGattServer
