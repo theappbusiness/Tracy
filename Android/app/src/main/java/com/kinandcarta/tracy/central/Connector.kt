@@ -18,7 +18,7 @@ class Connector {
     }
 
     private lateinit var context: Context
-    private val pendingConnections = mutableSetOf<BluetoothDevice>() // You can only perform one Bluetooth operation at once, including connecting, so you have to queue them!
+    private val queue = GattOperationQueue()
     private val connections = mutableSetOf<BluetoothGatt>()
     private val connectionCallback = object : BluetoothGattCallback() {
         override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
@@ -55,88 +55,72 @@ class Connector {
      */
     fun connect(device: BluetoothDevice, context: Context) {
         this.context = context
-        pendingConnections.add(device)
-        if (pendingConnections.size > 1) {
-            Log.d(tag, "Still awaiting ${pendingConnections.size} previous connection(s) to complete")
-            return
+        queue.push {
+            Log.d(tag, "Connecting next device ${device.address}")
+            val gatt = device.connectGatt(context, false, connectionCallback, BluetoothDevice.TRANSPORT_LE)
+            connections.add(gatt)
         }
-        connectNextPendingIfAny()
     }
 
     /**
      * Disconnects all connected and removes any pending connections.
      */
     fun disconnectAll() {
-        pendingConnections.clear()
+        queue.clear()
         connections.forEach { it.close() }
         connections.clear()
     }
 
-    private fun connectNextPendingIfAny() {
-        val nextDeviceToConnect = pendingConnections.firstOrNull() ?: return
-        Log.d(tag, "Connecting next device ${nextDeviceToConnect.address}")
-        val gatt = nextDeviceToConnect.connectGatt(context, false, connectionCallback, BluetoothDevice.TRANSPORT_LE)
-        connections.add(gatt)
-    }
-
-    private fun removePendingAndConnectNextIfAny(bluetoothGatt: BluetoothGatt) {
-        with(bluetoothGatt) {
-            disconnect()
-            close()
-            connections.remove(this)
-            if (!pendingConnections.remove(device)) Log.d(tag, "Device was not pending so cannot remove from pending connections ${bluetoothGatt.device.address}")
-            else connectNextPendingIfAny()
-        }
+    private fun closeGattAndRemoveConnection(bluetoothGatt: BluetoothGatt) {
+        bluetoothGatt.close()
+        connections.remove(bluetoothGatt)
+        queue.pop()
     }
 
     private fun onConnectionStateChangeSuccess(gatt: BluetoothGatt, newState: Int) {
         when (newState) {
             BluetoothProfile.STATE_CONNECTED -> {
                 Log.d(tag, "Connected to ${gatt.device.address}")
-                gatt.discoverServices()
+                queue.push { gatt.discoverServices() }
+                queue.pop()
             }
             BluetoothProfile.STATE_DISCONNECTED -> {
                 Log.d(tag, "Disconnected from ${gatt.device.address}")
-                removePendingAndConnectNextIfAny(gatt)
+                closeGattAndRemoveConnection(gatt)
             }
         }
     }
 
     private fun onConnectionStateChangeFailure(gatt: BluetoothGatt, status: Int) {
         Log.e(tag, "Connection state error for ${gatt.device.address} with status code $status")
-        removePendingAndConnectNextIfAny(gatt)
+        closeGattAndRemoveConnection(gatt)
     }
 
     private fun onServicesDiscoveredSuccess(gatt: BluetoothGatt) {
         Log.d(tag, "Discovered services successfully for ${gatt.device.address}")
         val service = gatt.services.firstOrNull { it.uuid == serviceUUID }
-        if (service == null) {
-            Log.e(tag, "Expected service does not exist ${gatt.device.address}")
-            throw IllegalStateException()
-        }
+            ?: throw IllegalStateException("Expected service does not exist ${gatt.device.address}")
         val characteristic = service.characteristics.firstOrNull { it.uuid == characteristicUUID }
-        if (characteristic == null) {
-            Log.e(tag, "Expected characteristic does not exist ${gatt.device.address}")
-            throw IllegalStateException()
-        }
-        gatt.readCharacteristic(characteristic)
+            ?: throw IllegalStateException("Expected characteristic does not exist ${gatt.device.address}")
+        queue.push { gatt.readCharacteristic(characteristic) }
+        queue.pop()
     }
 
     private fun onServicesDiscoveredFailure(gatt: BluetoothGatt, status: Int) {
         Log.e(tag, "Failed to discover services for ${gatt.device.address} with status code $status")
-        removePendingAndConnectNextIfAny(gatt)
+        closeGattAndRemoveConnection(gatt)
     }
 
     private fun onCharacteristicReadSuccess(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic) {
         val value = characteristic.value
         val stringValue = String(value, Charsets.UTF_8)
         Log.d(tag, "Read characteristic ${characteristic.uuid} for ${gatt.device.address} with value $stringValue")
-        gatt.disconnect()
+        queue.pop()
     }
 
     private fun onCharacteristicReadFailure(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
         Log.e(tag, "Failed to read characteristic ${characteristic.uuid} for ${gatt.device.address} with status code $status")
-        removePendingAndConnectNextIfAny(gatt)
+        closeGattAndRemoveConnection(gatt)
     }
 
 }

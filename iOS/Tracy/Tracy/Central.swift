@@ -92,7 +92,10 @@ extension Central: CBPeripheralDelegate {
       return print("Expected value for characteristic does not exist", peripheral.identifier, characteristic.uuid)
     }
     print("Value for characteristic", value, String(data: value, encoding: .utf8) ?? "")
-    centralManager.cancelPeripheralConnection(peripheral)
+  }
+
+  func peripheral(_ peripheral: CBPeripheral, didModifyServices invalidatedServices: [CBService]) {
+    print("Periphral modified services", peripheral.identifier, invalidatedServices)
   }
 
 }

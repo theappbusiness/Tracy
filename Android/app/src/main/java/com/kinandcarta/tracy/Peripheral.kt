@@ -14,15 +14,6 @@ class Peripheral {
         private const val tag = "Tracy - Peripheral"
     }
 
-    private val advertiser =  BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser
-    private val settings = AdvertiseSettings.Builder()
-        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
-        .setConnectable(true)
-        .setTimeout(0)
-        .build()
-    private val data = AdvertiseData.Builder()
-        .addServiceUuid(ParcelUuid(serviceUUID))
-        .build()
     private val advertiseCallback = object : AdvertiseCallback() {
         override fun onStartFailure(errorCode: Int) {
             Log.e(tag, "Advertising failed with error code: $errorCode")
@@ -38,14 +29,18 @@ class Peripheral {
             when (status) {
                 BluetoothGatt.GATT_SUCCESS -> {
                     Log.d(tag, "Successfully added service")
-                    advertiser.startAdvertising(settings, data, advertiseCallback)
+                    val settings = AdvertiseSettings.Builder()
+                        .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY)
+                        .setConnectable(true)
+                        .setTimeout(0)
+                        .build()
+                    val data = AdvertiseData.Builder()
+                        .addServiceUuid(ParcelUuid(serviceUUID))
+                        .build()
+                    BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser.startAdvertising(settings, data, advertiseCallback)
                 }
                 else -> Log.e(tag, "Could not add service (status code $status), advertising will not start")
             }
-        }
-
-        override fun onConnectionStateChange(device: BluetoothDevice?, status: Int, newState: Int) {
-            Log.d(tag, "Connection state changed to $newState with status $status for device ${device?.address}")
         }
 
         override fun onCharacteristicReadRequest(
@@ -70,7 +65,7 @@ class Peripheral {
     }
 
     fun stopAdvertisingToCentrals() {
-        advertiser.stopAdvertising(advertiseCallback)
+        BluetoothAdapter.getDefaultAdapter().bluetoothLeAdvertiser.stopAdvertising(advertiseCallback)
     }
 
 }
