@@ -22,7 +22,7 @@ device, which in this case will just be the name of the device.
 
 Each project is set up as similarly as each platform will allow, but since each platform handles background execution differently, they aren't exactly the same.
 
-Additionally, the iOS Core Bluetooth handles a lot for developers,
+Additionally, the iOS Core Bluetooth framework handles a lot for developers,
 including queuing operations which is still required on Android, but developers are responsible for queuing operations themselves.
 
 Each project has both a `Central` class and a `Peripheral` class, which are good places to start if you want to have a quick look.
@@ -74,6 +74,6 @@ However if you put the iOS app into the background, you'll notice that the Andro
 
 ## Caveats
 
-Although this code does generally work, the Android Bluetooth code is more reliable on some devices than others. Specifically, this has been tested on a Google Pixel 3a on API 29, and a Nexus 5X on API 27.
+Although this code does generally work, the Android Bluetooth code is more reliable on some devices than others. Specifically, this has been tested on a Google Pixel 3a on API 29, and a Nexus 5X on API 27, and the Pixel 3a was more consistent and reliable.
 
-PRs are welcome if you know how to improve this further!
+PRs are welcome if you know how and want to improve this further!
