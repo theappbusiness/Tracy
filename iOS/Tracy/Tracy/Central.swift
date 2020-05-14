@@ -53,7 +53,7 @@ extension Central: CBCentralManagerDelegate {
   }
 
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
-    print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "")
+    print("Discovered peripheral", peripheral.identifier, RSSI, peripheral.name ?? "", advertisementData)
     guard discoveries.insert(peripheral).inserted else { return print("Peripheral has already been discovered, ignoring", peripheral.identifier) }
     centralManager.connect(peripheral)
   }

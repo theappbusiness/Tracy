@@ -11,7 +11,7 @@ import UIKit
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
 
-  private let central = Central() // On Android, this happens in the BluetoothForegroundService. Since there's no service architecture on iOS, we'll just start everything in the AppDelegate.
+  private let central = Central() // On Android, this happens in the BluetoothForegroundService. Since there's no Service architecture on iOS, we'll just start everything in the AppDelegate.
   private let peripheral = Peripheral()
 
   func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
