@@ -11,6 +11,9 @@ import android.util.Log
 import com.kinandcarta.tracy.central.Central
 import com.kinandcarta.tracy.peripheral.Peripheral
 
+/**
+ * Runs as a foreground service to keep running as a Bluetooth Central and Peripheral
+ */
 class BluetoothForegroundService : Service() {
 
     companion object {
@@ -18,8 +21,8 @@ class BluetoothForegroundService : Service() {
         fun intent(context: Context) = Intent(context, BluetoothForegroundService::class.java)
     }
 
-    private val central = Central()
     private val peripheral = Peripheral()
+    private val central = Central()
 
     override fun onBind(p0: Intent?): IBinder? = null
 
@@ -31,8 +34,9 @@ class BluetoothForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d(tag, "onStartCommand")
-        central.startScanningForPeripherals(this)
-        peripheral.startAdvertisingToCentrals(this)
+        peripheral.startAdvertisingToCentrals(this) {
+            central.startScanningForPeripherals(this)
+        }
         return START_NOT_STICKY
     }
 

@@ -11,13 +11,17 @@ import com.kinandcarta.tracy.characteristicUUID
 import com.kinandcarta.tracy.serviceUUID
 import java.lang.IllegalStateException
 
+/**
+ * A Connector connects to a discovered Peripheral and requests some data from it's server to identify it.
+ *
+ * @see Scanner
+ */
 class Connector {
 
     companion object {
         private const val tag = "Tracy - Connector"
     }
 
-    private lateinit var context: Context
     private val queue = GattOperationQueue()
     private val connections = mutableSetOf<BluetoothGatt>()
     private val connectionCallback = object : BluetoothGattCallback() {
@@ -54,7 +58,6 @@ class Connector {
      * Connects the device, or queues it for connection if another connection is in progress.
      */
     fun connect(device: BluetoothDevice, context: Context) {
-        this.context = context
         queue.push {
             Log.d(tag, "Connecting next device ${device.address}")
             val gatt = device.connectGatt(context, false, connectionCallback, BluetoothDevice.TRANSPORT_LE)

@@ -12,6 +12,13 @@ import android.util.Log
 import com.kinandcarta.tracy.characteristicUUID
 import com.kinandcarta.tracy.serviceUUID
 
+/**
+ * A Server handles incoming requests for data from Centrals.
+ * You cannot connect and request data from this device as a Central unless it is discoverable first,
+ * which is handled by an Advertiser.
+ *
+ * @see Advertiser
+ */
 class Server {
 
     companion object {
@@ -46,6 +53,11 @@ class Server {
     private lateinit var server: BluetoothGattServer
     private lateinit var onStarted: () -> Unit
 
+    /**
+     * Starts the Server to be able to handle incoming requests for data.
+     * Starting a Server happens asynchronously, which calls the onStarted handler
+     * you provide to this function.
+     */
     fun start(context: Context, onStarted: () -> Unit) {
         this.onStarted = onStarted
         val manager = context.getSystemService(BluetoothManager::class.java)!!
@@ -63,6 +75,9 @@ class Server {
         server.addService(service)
     }
 
+    /**
+     * Stops this server so it cannot process incoming requests.
+     */
     fun stop() {
         server.close()
     }

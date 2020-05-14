@@ -10,9 +10,14 @@ import android.os.ParcelUuid
 import android.util.Log
 import com.kinandcarta.tracy.serviceUUID
 
-class Scanner(
-    private val onDiscoveredDevice: (BluetoothDevice) -> Unit
-) {
+/**
+ * A Scanner is responsible for searching for / discovering nearby Peripherals.
+ * Once a Peripheral is discovered you can use a Connector to connect to it and
+ * request data.
+ *
+ * @see Connector
+ */
+class Scanner {
 
     companion object {
         private const val tag = "Tracy - Scanner"
@@ -34,9 +39,16 @@ class Scanner(
             onDiscoveredDevice(result.device)
         }
     }
+    private lateinit var onDiscoveredDevice: (BluetoothDevice) -> Unit
     private val discoveries = mutableSetOf<BluetoothDevice>()
 
-    fun startScanning() {
+    /**
+     * Starts scanning for nearby devices.
+     * Upon discovery, the onDiscoveredDevice handler is called with the device.
+     * Each discovery is reported exactly once.
+     */
+    fun startScanning(onDiscoveredDevice: (BluetoothDevice) -> Unit) {
+        this.onDiscoveredDevice = onDiscoveredDevice
         val filter = ScanFilter.Builder()
             .setServiceUuid(ParcelUuid(serviceUUID))
             .build()
@@ -49,6 +61,11 @@ class Scanner(
         BluetoothAdapter.getDefaultAdapter().bluetoothLeScanner.startScan(listOf(filter), settings, scanCallback)
     }
 
+    /**
+     * Stops scanning for nearby Peripherals.
+     * Calling this and then starting scanning will cause any previously
+     * discovered Peripherals to be reported again (if they're still nearby).
+     */
     fun stopScanning() {
         BluetoothAdapter.getDefaultAdapter().bluetoothLeScanner.stopScan(scanCallback)
         discoveries.clear()
