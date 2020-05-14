@@ -8,6 +8,18 @@
 
 import CoreBluetooth
 
+/// A Central is responsible for discovering to nearby Peripherals,
+/// as well as connecting to them to request data.
+///
+/// A Central automatically starts scanning for nearby Peripherals
+/// as soon as Bluetooth is reported as on, and will automatically
+/// handle connecting to discoveries.
+///
+/// A Central employs background restoration, which means that if
+/// the app itself is killed in the background by the system,
+/// the system will automatically relaunch the app if a discovery or
+/// other Central Bluetooth event occurs so that the Central is re-created
+/// and can handle the event.
 final class Central: NSObject {
 
   private var centralManager: CBCentralManager!

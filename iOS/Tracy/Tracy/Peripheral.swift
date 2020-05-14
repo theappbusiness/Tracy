@@ -9,6 +9,18 @@
 import CoreBluetooth
 import UIKit
 
+/// A Peripheral is responsible for advertising this device to nearby Centrals,
+/// as well as handling incoming requests for data.
+///
+/// A Peripheral automatically starts advertising this device
+/// as soon as Bluetooth is reported as on, and will automatically
+/// handle incoming requests for data.
+///
+/// A Peripheral employs background restoration, which means that if
+/// the app itself is killed in the background by the system,
+/// the system will automatically relaunch the app if an incoming request or
+/// other Peripheral Bluetooth event occurs so that the Peripheral is re-created
+/// and can handle the event.
 final class Peripheral: NSObject {
 
   private var peripheralManager: CBPeripheralManager!
